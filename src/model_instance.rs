@@ -62,6 +62,8 @@ pub struct ModelInstance {
     pub ffm_init_zero_band: f32,	// from 0.0 to 1.0, percentage of ffm_init_width
     #[serde(default = "default_f32_zero")]
     pub ffm_init_acc_gradient: f32,
+	#[serde(default)]
+    pub ffm_initialization_type: String,
     #[serde(default = "default_f32_zero")]
     pub init_acc_gradient: f32,
     // these are only used for learning, so it doesnt matter they got set to zero as default        
@@ -104,6 +106,7 @@ impl ModelInstance {
             ffm_init_width: 0.0,
             ffm_init_zero_band: 0.0,
             ffm_init_acc_gradient: 0.0,
+			ffm_initialization_type: String::from("default"),
             init_acc_gradient: 1.0,
             optimizer: Optimizer::SGD,
             transform_namespaces: feature_transform_parser::NamespaceTransforms::new(),

@@ -209,7 +209,11 @@ pub fn parse<'a>() -> clap::ArgMatches<'a> {
                      .help("Adagrad initial accumulated gradient for ")
                      .multiple(false)
                      .takes_value(true))
-
+                    .arg(Arg::with_name("ffm_initialization_type")
+                     .long("ffm_initialization_type")
+                     .help("Specifies the weight initialization procedure. ")
+                     .multiple(false)
+                     .takes_value(true))
 
                      
 
