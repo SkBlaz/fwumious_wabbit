@@ -15,6 +15,17 @@ use block_helpers::{f32_to_json, Weight, WeightAndOptimizerData};
 use optimizer::OptimizerTrait;
 use regressor::BlockTrait;
 use std::mem::{self, MaybeUninit};
+use std::collections::HashSet;
+use std::hash::Hash;
+
+fn has_unique_elements<T>(iter: T) -> bool
+where
+    T: IntoIterator,
+    T::Item: Eq + Hash,
+{
+    let mut uniq = HashSet::new();
+    iter.into_iter().all(move |x| uniq.insert(x))
+}
 
 pub struct BlockLR<L: OptimizerTrait> {
     pub weights: Vec<WeightAndOptimizerData<L>>,
@@ -140,6 +151,7 @@ impl<L: OptimizerTrait + 'static> BlockTrait for BlockLR<L> {
         map.insert("_type".to_string(), Value::String("BlockLR".to_string()));
         let mut features: Vec<Value> = Vec::new();
         //            println!("A: {}. B: {}", fb.lr_buffer.len(), fb.lr_buffer_audit.len());
+		let mut v_holder: Vec<String> = Vec::new();
         for (val, combo_number) in fb.lr_buffer.iter().zip(fb.lr_buffer_audit.iter()) {
             let feature_hash_index = val.hash;
             let feature_value = val.value;
@@ -153,7 +165,10 @@ impl<L: OptimizerTrait + 'static> BlockTrait for BlockLR<L> {
 			if fb.audit_aux_data.combo_index_to_string[combo_number].eq(&"Constant_feature".to_string()) {
 				break;
 			}
+			v_holder.push(fb.audit_aux_data.combo_index_to_string[combo_number].clone());
         }
+
+		assert_eq!(has_unique_elements(v_holder), true);
         map.insert("input".to_string(), Value::Array(features));
         map.insert("output".to_string(), f32_to_json(output));
         fb.add_audit_json(map);
