@@ -149,7 +149,10 @@ impl<L: OptimizerTrait + 'static> BlockTrait for BlockLR<L> {
                     "weight": self.weights[feature_hash_index as usize].weight,
                     "feature": fb.audit_aux_data.combo_index_to_string[combo_number],
                     "optimizer_data": self.optimizer_lr.get_audit_data(&self.weights[feature_hash_index as usize].optimizer_data),
-                    }));
+            }));
+			if fb.audit_aux_data.combo_index_to_string[combo_number].eq(&"Constant_feature".to_string()) {
+				break;
+			}
         }
         map.insert("input".to_string(), Value::Array(features));
         map.insert("output".to_string(), f32_to_json(output));
